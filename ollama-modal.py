@@ -64,17 +64,6 @@ class Ollama:
             print(chunk['message']['content'], end='', flush=True)
         return
 
-# TODO(irfansharif): Make something like the following just work:
-#
-#   $ modal shell ollama-modal.py --cmd "systemctl start ollama; ollama run llama3:instruct"
-#
-# So we get the nice Ollama prompt right off the bat. The following works for now though:
-#
-#  $ modal shell --region us-east ollama-modal.py
-#  root@modal:/# systemctl start ollama; ollama run llama3:instruct
-#  >>> Send a message (/? for help)
-
-
 # Convenience thing, to run using:
 #
 #  $ modal run ollama-modal.py [--lookup] [--text "Why is the sky blue?"]

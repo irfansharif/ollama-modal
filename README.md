@@ -1,8 +1,7 @@
     
     # To get an Ollama prompt, running on Modal.
-    $ modal shell --region us-east ollama-modal.py
-    root@modal:/# systemctl start ollama
-    root@modal:/# ollama run llama3:instruct
+    $ modal shell --region us-east ollama-modal.py \
+        --cmd 'systemctl start ollama && ollama run llama3:instruct'
     >>> Send a message (/? for help)
 
 <img width="1278" alt="image" src="https://github.com/irfansharif/ollama-modal/assets/10536690/197a1aa4-36f8-47b4-9efc-76bffe03896a">
