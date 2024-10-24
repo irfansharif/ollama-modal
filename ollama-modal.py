@@ -34,7 +34,7 @@ app = modal.App(name="ollama", image=image)
 with image.imports():
     import ollama
 
-@app.cls(gpu="a10g", region="us-east", container_idle_timeout=300)
+@app.cls(gpu="a10g", container_idle_timeout=300)
 class Ollama:
     @build()
     def pull(self):
