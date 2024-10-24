@@ -19,9 +19,10 @@ image = (
     .debian_slim()
     .apt_install("curl", "systemctl")
     .run_commands( # from https://github.com/ollama/ollama/blob/main/docs/linux.md
-        "curl -L https://ollama.com/download/ollama-linux-amd64 -o /usr/bin/ollama",
-        "chmod +x /usr/bin/ollama",
-        "useradd -r -s /bin/false -m -d /usr/share/ollama ollama",
+        "curl -L https://ollama.com/download/ollama-linux-amd64.tgz -o ollama-linux-amd64.tgz",
+        "tar -C /usr -xzf ollama-linux-amd64.tgz",
+        "useradd -r -s /bin/false -U -m -d /usr/share/ollama ollama",
+        "usermod -a -G ollama $(whoami)",
     )
     .copy_local_file("ollama.service", "/etc/systemd/system/ollama.service")
     .pip_install("ollama")
