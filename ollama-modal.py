@@ -7,6 +7,7 @@ from modal import build, enter, method
 
 MODEL = os.environ.get("MODEL", "llama3:instruct")
 
+
 def pull(model: str = MODEL):
     subprocess.run(["systemctl", "daemon-reload"])
     subprocess.run(["systemctl", "enable", "ollama"])
@@ -14,11 +15,11 @@ def pull(model: str = MODEL):
     time.sleep(2)  # 2s, wait for the service to start
     subprocess.run(["ollama", "pull", model], stdout=subprocess.PIPE)
 
+
 image = (
-    modal.Image
-    .debian_slim()
+    modal.Image.debian_slim()
     .apt_install("curl", "systemctl")
-    .run_commands( # from https://github.com/ollama/ollama/blob/main/docs/linux.md
+    .run_commands(  # from https://github.com/ollama/ollama/blob/main/docs/linux.md
         "curl -L https://ollama.com/download/ollama-linux-amd64.tgz -o ollama-linux-amd64.tgz",
         "tar -C /usr -xzf ollama-linux-amd64.tgz",
         "useradd -r -s /bin/false -U -m -d /usr/share/ollama ollama",
@@ -33,6 +34,7 @@ app = modal.App(name="ollama", image=image)
 
 with image.imports():
     import ollama
+
 
 @app.cls(gpu="a10g", container_idle_timeout=300)
 class Ollama:
@@ -54,16 +56,16 @@ class Ollama:
         subprocess.run(["systemctl", "start", "ollama"])
 
     @method()
-    def infer(self, text: str):
+    def infer(self, text: str, verbose: bool = False):
         stream = ollama.chat(
-            model=MODEL,
-            messages=[{'role': 'user', 'content': text}],
-            stream=True
+            model=MODEL, messages=[{"role": "user", "content": text}], stream=True
         )
         for chunk in stream:
-            yield chunk['message']['content']
-            print(chunk['message']['content'], end='', flush=True)
+            yield chunk["message"]["content"]
+            if verbose:
+                print(chunk["message"]["content"], end="", flush=True)
         return
+
 
 # Convenience thing, to run using:
 #
@@ -74,5 +76,5 @@ def main(text: str = "Why is the sky blue?", lookup: bool = False):
         ollama = modal.Cls.lookup("ollama", "Ollama")
     else:
         ollama = Ollama()
-    for chunk in ollama.infer.remote_gen(text):
-        print(chunk, end='', flush=False)
+    for chunk in ollama.infer.remote_gen(text, verbose=False):
+        print(chunk, end="", flush=False)
