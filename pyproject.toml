@@ -1,7 +1,7 @@
 [project]
 name = "ollama-modal"
 version = "0.1.0"
-description = "Add your description here"
+description = "Ollama quickstart with Modal"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
